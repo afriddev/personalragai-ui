@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Chat from "./Chat";
 import { Toaster } from "./components/ui/toaster";
 import ProtectedRoute from "./apputils/ProtectedRoute";
+import ChatMain from "./features/chat/ChatMain";
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Chat />} />
+            <Route path="/" element={<ChatMain />} />
           </Route>
         </Routes>
       </BrowserRouter>

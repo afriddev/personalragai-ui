@@ -173,6 +173,7 @@ export default function Chat() {
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
+        
 
         <PromptInput onSubmit={handleSubmit}>
           <div className="flex  items-center pr-4">
