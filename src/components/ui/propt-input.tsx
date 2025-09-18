@@ -22,7 +22,6 @@ import {
   Loader2Icon,
   PaperclipIcon,
   PlusIcon,
-  SendIcon,
   SquareIcon,
   XIcon,
 } from "lucide-react";
@@ -46,6 +45,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { FaArrowUp } from "react-icons/fa";
 
 type AttachmentsContext = {
   files: (FileUIPart & { id: string })[];
@@ -612,7 +612,7 @@ export const PromptInputSubmit = ({
   children,
   ...props
 }: PromptInputSubmitProps) => {
-  let Icon = <SendIcon className="size-4" />;
+  let Icon = <FaArrowUp className="size-4" />;
 
   if (status === "submitted") {
     Icon = <Loader2Icon className="size-4 animate-spin" />;
