@@ -14,7 +14,7 @@ function Chat() {
           />
 
           <div className="absolute right-7 top-0 h-full flex items-center justify-center">
-            <Button >
+            <Button>
               <IoIosSend className="" />
             </Button>
           </div>
