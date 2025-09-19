@@ -40,7 +40,6 @@ import type {
 } from "@/types/ChatDataTypes";
 import { LuBrain } from "react-icons/lu";
 import { VscSymbolEvent } from "react-icons/vsc";
-import { VscWand } from "react-icons/vsc";
 import {
   Source,
   Sources,
@@ -48,17 +47,15 @@ import {
   SourcesTrigger,
 } from "@/components/ui/sources";
 
-const CHAT_API = "http://localhost:8001/api/v1/chat";
-
+const CHAT_API = "http://127.0.0.1:8001/api/v1/chat";
 function ChatMain() {
   const [status, setStatus] = useState<ChatStatus>("ready");
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<chatMessageDataType[]>([]);
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useCode, setUseCode] = useState<boolean>(false);
-  const [useDeepResearch, setUseDeepResearch] = useState<boolean>(true);
-  const [useFlash, setUseFlash] = useState<boolean>(false);
-  const [useCreative, setUseCreative] = useState<boolean>(false);
+  const [useDeepResearch, setUseDeepResearch] = useState<boolean>(false);
+  const [useFlash, setUseFlash] = useState<boolean>(true);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -77,7 +74,6 @@ function ChatMain() {
       useCode: useCode,
       useDeepResearch: useDeepResearch,
       useFlash: useFlash,
-      useCreative: useCreative,
     };
     const allMessages = [
       ...messages,
@@ -169,16 +165,7 @@ function ChatMain() {
   function handleChatAction(
     type: "creative" | "flash" | "deepResearch" | "webSearch" | "code"
   ) {
-    setUseCreative(false);
-    setUseFlash(false);
-    setUseDeepResearch(false);
-    setUseWebSearch(false);
-    setUseCode(false);
-
     switch (type) {
-      case "creative":
-        setUseCreative(!useCreative);
-        break;
       case "flash":
         setUseFlash(!useFlash);
         break;
@@ -206,14 +193,14 @@ function ChatMain() {
                 (message.searchResults && message.searchResults?.length > 0)
               )
                 return (
-                  <div key={index} className="mb-4 w-[40vw]">
+                  <div key={index} className="mb-4 w-[50vw]">
                     <Message from={message.role}>
                       <MessageContent>
                         {message.reasoningContent && (
                           <Reasoning
                             className="w-full "
-                            isStreaming={true}
-                            defaultOpen={false}
+                            isStreaming={status === "streaming" ? true : false}
+                            defaultOpen={true}
                           >
                             <ReasoningTrigger />
                             <ReasoningContent>
@@ -267,7 +254,7 @@ function ChatMain() {
               else return null;
             })}
             {status === "submitted" && (
-              <div className="w-[40vw] items-start">
+              <div className="w-[50vw] items-start">
                 <Loader />
               </div>
             )}
@@ -276,7 +263,7 @@ function ChatMain() {
           <ConversationScrollButton />
         </Conversation>
       </div>
-      <div className="w-[40vw] absolute bottom-5">
+      <div className="w-[50vw] absolute bottom-5">
         <PromptInput onSubmit={handleSubmit}>
           <div className="flex  items-center pr-4">
             <PromptInputTextarea
@@ -298,13 +285,6 @@ function ChatMain() {
                         <span className="sr-only">Microphone</span>
                       </PromptInputButton> */}
 
-              <PromptInputButton
-                variant={useCreative ? "default" : "ghost"}
-                onClick={() => handleChatAction("creative")}
-              >
-                <VscWand className="h-6 w-6" />
-                <span>Creative</span>
-              </PromptInputButton>
               <PromptInputButton
                 variant={useFlash ? "default" : "ghost"}
                 onClick={() => handleChatAction("flash")}
