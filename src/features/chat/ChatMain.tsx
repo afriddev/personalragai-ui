@@ -54,9 +54,9 @@ function ChatMain() {
   const [status, setStatus] = useState<ChatStatus>("ready");
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<chatMessageDataType[]>([]);
-  const [useWebSearch, setUseWebSearch] = useState<boolean>(true);
+  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useCode, setUseCode] = useState<boolean>(false);
-  const [useDeepResearch, setUseDeepResearch] = useState<boolean>(false);
+  const [useDeepResearch, setUseDeepResearch] = useState<boolean>(true);
   const [useFlash, setUseFlash] = useState<boolean>(false);
   const [useCreative, setUseCreative] = useState<boolean>(false);
 
