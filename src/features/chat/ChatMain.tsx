@@ -34,16 +34,31 @@ import { v4 as uuidv4 } from "uuid";
 import { RxCode } from "react-icons/rx";
 import { Loader } from "@/components/ui/loader";
 import { Response } from "@/components/ui/response";
-import type { chatRequestDataType } from "@/types/ChatDataTypes";
+import type {
+  chatMessageDataType,
+  chatRequestDataType,
+} from "@/types/ChatDataTypes";
+import { LuBrain } from "react-icons/lu";
+import { VscSymbolEvent } from "react-icons/vsc";
+import { VscWand } from "react-icons/vsc";
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from "@/components/ui/sources";
 
 const CHAT_API = "http://localhost:8001/api/v1/chat";
 
 function ChatMain() {
   const [status, setStatus] = useState<ChatStatus>("ready");
-  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
-  const [useCode, setUseCode] = useState<boolean>(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<chatRequestDataType[]>([]);
+  const [messages, setMessages] = useState<chatMessageDataType[]>([]);
+  const [useWebSearch, setUseWebSearch] = useState<boolean>(true);
+  const [useCode, setUseCode] = useState<boolean>(false);
+  const [useDeepResearch, setUseDeepResearch] = useState<boolean>(false);
+  const [useFlash, setUseFlash] = useState<boolean>(false);
+  const [useCreative, setUseCreative] = useState<boolean>(false);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,12 +67,28 @@ function ChatMain() {
   }, [messages]);
 
   async function sendToBackend(message: chatRequestDataType) {
-    const allMessages = [...messages, message];
-    setMessages(allMessages);
     const body = {
-      content: message.content,
+      query: message.content,
       messages: messages,
+      messageId: message.id,
+      role: message.role,
+
+      useWebSearch: useWebSearch,
+      useCode: useCode,
+      useDeepResearch: useDeepResearch,
+      useFlash: useFlash,
+      useCreative: useCreative,
     };
+    const allMessages = [
+      ...messages,
+      {
+        role: message.role,
+        id: message.id,
+        reasoningContent: "",
+        content: message.content,
+      },
+    ];
+    setMessages(allMessages);
 
     const controller = new AbortController();
 
@@ -70,18 +101,17 @@ function ChatMain() {
 
     const reader = resp.body?.getReader();
     const decoder = new TextDecoder();
-    const assistantPlaceholder: chatRequestDataType = {
+    const assistantTemplateMessage: chatMessageDataType = {
       id: uuidv4().toString(),
       role: "assistant",
       content: "",
       reasoningContent: "",
-      useWebSearch: useWebSearch,
-      useCode: useCode,
+      searchResults: [],
     };
 
-    setMessages((prev) => [...prev, assistantPlaceholder]);
+    setMessages((prev) => [...prev, assistantTemplateMessage]);
     while (true) {
-      const { done, value } = await reader.read();
+      const { done, value } = await (reader as any).read();
 
       if (done) break;
 
@@ -97,17 +127,21 @@ function ChatMain() {
 
             setMessages((prev) =>
               prev.map((m) =>
-                m.id === assistantPlaceholder.id
+                m.id === assistantTemplateMessage.id
                   ? {
                       ...m,
                       content:
                         parsedToken.type === "content"
                           ? (m.content ?? "") + parsedToken.data
                           : m.content,
-                      reasoning:
+                      reasoningContent:
                         parsedToken.type === "reasoning"
                           ? (m.reasoningContent ?? "") + parsedToken.data
                           : m.reasoningContent,
+                      searchResults:
+                        parsedToken.type === "searchResults"
+                          ? parsedToken.data
+                          : m.searchResults,
                     }
                   : m
               )
@@ -127,11 +161,36 @@ function ChatMain() {
         id: uuidv4().toString(),
         role: "user",
         content: message.text,
-        reasoningContent: "",
-        useWebSearch: useWebSearch,
-        useCode: useCode,
       });
       setInput("");
+    }
+  }
+
+  function handleChatAction(
+    type: "creative" | "flash" | "deepResearch" | "webSearch" | "code"
+  ) {
+    setUseCreative(false);
+    setUseFlash(false);
+    setUseDeepResearch(false);
+    setUseWebSearch(false);
+    setUseCode(false);
+
+    switch (type) {
+      case "creative":
+        setUseCreative(!useCreative);
+        break;
+      case "flash":
+        setUseFlash(!useFlash);
+        break;
+      case "deepResearch":
+        setUseDeepResearch(!useDeepResearch);
+        break;
+      case "webSearch":
+        setUseWebSearch(!useWebSearch);
+        break;
+      case "code":
+        setUseCode(!useCode);
+        break;
     }
   }
 
@@ -140,10 +199,14 @@ function ChatMain() {
       <div className="w-full h-full   pb-36 flex justify-center items-center">
         <Conversation className="h-full  flex justify-center items-center">
           <ConversationContent className="flex flex-col justify-center items-center">
-            {messages.map((message) => {
-              if (message.content || message.reasoningContent)
+            {messages.map((message, index) => {
+              if (
+                message.content ||
+                message.reasoningContent ||
+                (message.searchResults && message.searchResults?.length > 0)
+              )
                 return (
-                  <div key={message.id} className="mb-4 w-[40vw]">
+                  <div key={index} className="mb-4 w-[40vw]">
                     <Message from={message.role}>
                       <MessageContent>
                         {message.reasoningContent && (
@@ -158,6 +221,28 @@ function ChatMain() {
                             </ReasoningContent>
                           </Reasoning>
                         )}
+                        {message.searchResults &&
+                          message.searchResults.length > 0 && (
+                            <Sources>
+                              <SourcesTrigger
+                                count={message.searchResults.length}
+                              />
+
+                              <SourcesContent>
+                                {message.searchResults.map(
+                                  (searchResult, index1) => {
+                                    return (
+                                      <Source
+                                        key={index1}
+                                        href={searchResult.url}
+                                        title={searchResult.title}
+                                      />
+                                    );
+                                  }
+                                )}
+                              </SourcesContent>
+                            </Sources>
+                          )}
                         <Response>{message.content}</Response>
                         {message.role === "assistant" && (
                           <Actions>
@@ -212,9 +297,32 @@ function ChatMain() {
                         <MicIcon size={16} />
                         <span className="sr-only">Microphone</span>
                       </PromptInputButton> */}
+
+              <PromptInputButton
+                variant={useCreative ? "default" : "ghost"}
+                onClick={() => handleChatAction("creative")}
+              >
+                <VscWand className="h-6 w-6" />
+                <span>Creative</span>
+              </PromptInputButton>
+              <PromptInputButton
+                variant={useFlash ? "default" : "ghost"}
+                onClick={() => handleChatAction("flash")}
+              >
+                <VscSymbolEvent className="h-6 w-6" />
+                <span>Flash</span>
+              </PromptInputButton>
+              <PromptInputButton
+                variant={useDeepResearch ? "default" : "ghost"}
+                onClick={() => handleChatAction("deepResearch")}
+              >
+                <LuBrain className="h-6 w-6" />
+                <span>Deep Reasearch</span>
+              </PromptInputButton>
+
               <PromptInputButton
                 variant={useWebSearch ? "default" : "ghost"}
-                onClick={() => setUseWebSearch(!useWebSearch)}
+                onClick={() => handleChatAction("webSearch")}
               >
                 <GlobeIcon size={16} />
                 <span>Search</span>
@@ -222,7 +330,7 @@ function ChatMain() {
 
               <PromptInputButton
                 variant={useCode ? "default" : "ghost"}
-                onClick={() => setUseCode(!useCode)}
+                onClick={() => handleChatAction("code")}
               >
                 <RxCode className="h-6 w-6" />
                 <span>Code</span>

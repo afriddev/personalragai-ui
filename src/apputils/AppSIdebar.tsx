@@ -17,26 +17,26 @@ function AppSidebar() {
               src="logo.png"
               className="h-10 w-10 object-cover cursor-pointer"
             />
-            <FiSidebar className="h-10 w-10 cursor-pointer lg:hover:bg-muted/20 p-2 rounded " />
+            <FiSidebar className="h-10 w-10 cursor-pointer lg:hover:bg-muted p-2 rounded " />
           </div>
           <div>
             <div className="flex flex-col gap-1 pt-5">
-              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted/20 rounded cursor-pointer">
+              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted rounded cursor-pointer">
                 <p className=" font-medium">New Chat</p>
                 <MdOutlineChatBubbleOutline className="h-6 w-6" />
               </div>
 
-              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted/20 rounded cursor-pointer">
+              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted rounded cursor-pointer">
                 <p className=" font-medium">Search Chats</p>
                 <LuSearch className="h-6 w-6" />
               </div>
 
-              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted/20 rounded cursor-pointer">
+              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted rounded cursor-pointer">
                 <p className=" font-medium">Generate Image</p>
                 <MdOutlineImage className="h-6 w-6" />
               </div>
 
-              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted/20 rounded cursor-pointer">
+              <div className="flex items-center gap-3 justify-between  w-full p-3 lg:hover:bg-muted rounded cursor-pointer">
                 <p className=" font-medium">New Project</p>
                 <FiFolderPlus className="h-6 w-6" />
               </div>
@@ -44,7 +44,7 @@ function AppSidebar() {
           </div>
         </div>
 
-        <div className="flex  items-center justify-between cursor-pointer gap-2 shadow border border-foreground/20 lg:hover:shadow-xs lg:hover:bg-muted/50  rounded p-2 px-4">
+        <div className="flex  items-center justify-between cursor-pointer gap-2 shadow border border-foreground/20 lg:hover:shadow-xs lg:hover:bg-muted  rounded p-2 px-4">
           <div className="flex items-center gap-3">
             <Avatar>
               <AvatarImage src="logo.png" alt="@shadcn" />

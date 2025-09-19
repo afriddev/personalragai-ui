@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
 
 import {
   Conversation,
@@ -43,7 +42,7 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
   const [status, setStatus] = useState<ChatStatus>("ready");
-  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
+  const [useWebSearch, setUseWebSearch] = useState<boolean>(true);
   const [useCode, setUseCode] = useState<boolean>(false);
 
   async function sendToBackend(message: any) {
