@@ -54,8 +54,8 @@ function ChatMain() {
   const [messages, setMessages] = useState<chatMessageDataType[]>([]);
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useCode, setUseCode] = useState<boolean>(false);
-  const [useDeepResearch, setUseDeepResearch] = useState<boolean>(false);
-  const [useFlash, setUseFlash] = useState<boolean>(true);
+  const [useDeepResearch, setUseDeepResearch] = useState<boolean>(true);
+  const [useFlash, setUseFlash] = useState<boolean>(false);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
